@@ -19,20 +19,27 @@ while True:
     _, frame = cap.read()
     start = time.time()
 
-    classes, scores, boxes = model.detect(frame, 0.2, 0.6)
+    classes, scores, boxes = model.detect(frame, 0.1, 0.2)
     
     end = time.time()
 
     for (classid, score, box) in zip(classes, scores, boxes):
+        objname = class_names[classid]
         color = COLORS[int(classid) % len(COLORS)]
-        label = f"{class_names[classid]} : {score}"
+        label = f"{objname} : {score}"
         cv2.rectangle(frame, box, color, 2)
         cv2.putText(frame, label, (box[0], box[1] - 10), cv2.FONT_HERSHEY_DUPLEX, 0.5, color, 2)
-
+        if objname == "person":
+            print('Person detected')
+        else:
+            print('nothing detected')
+            
     fps_label = f"FPS: {round(1.0/(end - start), 2)}"
 
     cv2.putText(frame, fps_label, (0, 25), cv2.FONT_HERSHEY_DUPLEX, 1, (0, 0, 0), 5)
     cv2.putText(frame, fps_label, (0, 25), cv2.FONT_HERSHEY_DUPLEX, 1, (0, 255, 0), 3)
+
+   
 
     cv2.imshow("detections", frame)
     if cv2.waitKey(1) == 27:
